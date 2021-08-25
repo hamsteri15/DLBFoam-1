@@ -61,7 +61,6 @@ loadbalancing
 }
 ```
 
-```
 * (Optional) Set the refmapping as active in chemistryProperties file if you want to 
     use the reference mapping method (you have to add an empty ```refmapping{}``` dict
     even if you do not use it):
@@ -109,7 +108,7 @@ For a working example, check the tutorials given in tutorials folder.
 
 ## Contributors
 - Bulut Tekgül (buluttekgul@gmail.com)
-- Petteri Peltonen (petteri.peltonen@aalto.fi)
+- Petteri Peltonen (petteri.peltonen@vtt.fi)
 - Heikki Kahila (heikki.kahila@wartsila.com)
 - Ilya Morev (ilya.morev@aalto.fi)
 - Mahmoud Gadalla (mahmoud.gadalla@aalto.fi)
