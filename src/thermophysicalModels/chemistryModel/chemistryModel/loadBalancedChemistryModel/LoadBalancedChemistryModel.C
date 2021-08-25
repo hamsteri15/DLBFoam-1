@@ -249,6 +249,16 @@ void Foam::LoadBalancedChemistryModel<ReactionThermo, ThermoType>::solveSingle
     solution.rhoi = problem.rhoi;
 }
 
+template <class ReactionThermo, class ThermoType>
+Foam::ChemistrySolution Foam::LoadBalancedChemistryModel<ReactionThermo, ThermoType>::solveSingle
+(
+    ChemistryProblem& problem
+) const
+{
+    ChemistrySolution solution(this->nSpecie());
+    solveSingle(problem, solution);
+    return solution;
+}
 
 template <class ReactionThermo, class ThermoType>
 Foam::scalar
@@ -311,6 +321,7 @@ Foam::LoadBalancedChemistryModel<ReactionThermo, ThermoType>::solveBuffer
     
     for(auto& p : problems)
     {
+
         solutions.append(solveList(p));
     }
     return solutions;
@@ -327,8 +338,11 @@ Foam::LoadBalancedChemistryModel<ReactionThermo, ThermoType>::solveList
     DynamicList<ChemistrySolution> solutions(
         problems.size(), ChemistrySolution(this->nSpecie_));
 
+    //DynamicList<ChemistrySolution> solutions(problems.size());
+
     for(label i = 0; i < problems.size(); ++i)
     {
+        //solutions[i] = solveSingle(problems[i]);
         solveSingle(problems[i], solutions[i]);
     }
     return solutions;

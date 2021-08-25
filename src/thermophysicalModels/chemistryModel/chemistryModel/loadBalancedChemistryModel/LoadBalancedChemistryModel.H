@@ -151,6 +151,10 @@ public:
         //- Solve a single ChemistryProblem and put the solution to ChemistrySolution 
         void solveSingle(ChemistryProblem& problem, ChemistrySolution& solution) const;
 
+        //- Solve a single ChemistryProblem and put the solution to ChemistrySolution 
+        ChemistrySolution solveSingle(ChemistryProblem& problem) const;
+        
+        
         // Chemistry model functions (overriding functions in
         // StandardChemistryModel to use the private solve function)
 

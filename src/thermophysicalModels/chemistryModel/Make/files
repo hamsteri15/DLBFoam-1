@@ -11,8 +11,6 @@ refMapping/mixtureFractionRefMapper.C
 loadBalancing/LoadBalancer.C
 
 chemistrySolver/DLBChemistrySolvers.C
-chemistrySolver/DLBnoChemistrySolvers.C
-chemistrySolver/DLBodeChemistrySolvers.C
 
 
 
