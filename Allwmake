@@ -20,82 +20,13 @@ check_openfoam()
     fi
 }
 
-check_mkl()
-{
-    if [ -d "$MKLROOT" ]; then
-        echo "Utilising Intel MKL version from path: ${MKLROOT}"
-    else
-        echo "Error: MKL_ROOT=${MKLROOT} not found."
-        exit 1
-    fi    
-}
-
-check_openblas()
-{
-    if [ -d "$OPENBLAS_INSTALL_ROOT" ]; then
-        echo "Utilising OpenBLAS from path: ${OPENBLAS_INSTALL_ROOT}"
-    else
-        echo "Error: OPENBLAS_INSTALL_ROOT=${OPENBLAS_INSTALL_ROOT} not found."
-        exit 1
-    fi    
-}
-
-
-check_cmake()
-{
-    if ! command -v cmake &> /dev/null
-    then
-        echo "Error: cmake could not be found. Required for compiling the pyJac C-library."
-        exit 1
-    fi
-}
-
 how_to()
 {
     echo "Error: Correct platform syntax ./Allwmake --platform MKL/OPENBLAS/STANDALONE" 
 }
 
 
-PLATFORM=NOT_DEFINED
-CLEAN_ALL=false
-POSITIONAL=()
-while [[ $# -gt 0 ]]
-do
-    key="$1"
-    case $key in
-        --clean)
-        CLEAN_ALL=true
-        shift # past argument
-        ;;
-        --platform)
-        PLATFORM="$2"
-        shift # past argument
-        shift # past value
-        ;;
-        *) 
-        how_to 
-        exit 1 
-        ;;    
-    esac
-done
-set -- "${POSITIONAL[@]}" # restore positional parameters
-
-
 check_openfoam
-check_cmake
-
-if [ $PLATFORM == MKL ]; then
-    check_mkl
-    cp  src/ODE_DLB/Make/options.mkl src/ODE_DLB/Make/options
-elif [ $PLATFORM == OPENBLAS ]; then
-    check_openblas
-    cp  src/ODE_DLB/Make/options.openblas src/ODE_DLB/Make/options
-elif [ $PLATFORM == STANDALONE ]; then
-    cp  src/ODE_DLB/Make/options.standalone src/ODE_DLB/Make/options
-else
-    how_to
-    exit 1
-fi
 
 
 if [ $CLEAN_ALL == true ]; then
@@ -104,28 +35,6 @@ fi
 
 
 wmake libso src/thermophysicalModels/chemistryModel
-wmake libso src/ODE_DLB
-
-pushd tests/validation/pyjacTests/pyjacTestMechanism/lib  > /dev/null
-    ./runCmake.sh
-popd  > /dev/null
-
 wmake tests/unittests
 
-wmake tests/validation/pyjacTests/PSRTest
 
-pushd tests/unittests  > /dev/null
-    ./test.sh
-popd  > /dev/null
-
-pushd tests/validation/pyjacTests/PSRTest  > /dev/null
-    ./runTests.sh
-popd  > /dev/null
-
-cp -r utilities/mechanisms/yao tutorials/reactingFoam/shearlayer_DLB_pyJac/pyJac
-cp utilities/CMakeLists.txt tutorials/reactingFoam/shearlayer_DLB_pyJac/pyJac/lib/
-cp utilities/runCmake.sh tutorials/reactingFoam/shearlayer_DLB_pyJac/pyJac/lib/
-
-cp -r utilities/mechanisms/gri30 tutorials/chemFoam/gri_pyJac/pyJac
-cp utilities/CMakeLists.txt tutorials/chemFoam/gri_pyJac/pyJac/lib/
-cp utilities/runCmake.sh tutorials/chemFoam/gri_pyJac/pyJac/lib/

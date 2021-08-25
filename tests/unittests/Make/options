@@ -22,7 +22,6 @@ EXE_LIBS = \
     -lfiniteVolume \
     -lmeshTools \
     -lchemistryModel \
-    -lchemistryModel_DLB \
-    -L$(FOAM_USER_LIBBIN)/unittests/pyjacTestMech/build \
-    -lc_pyjac_test
+    -lchemistryModel_DLB
+    
 

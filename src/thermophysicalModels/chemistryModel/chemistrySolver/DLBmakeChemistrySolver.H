@@ -75,13 +75,7 @@ thermoConstructorToTable_;
         LoadBalancedChemistryModel,                                            \
         ReactionThermo,                                                        \
         ThermoPhysics                                                          \
-    );                                                                         \
-    defineChemistrySolver                                                      \
-    (                                                                          \
-        pyJacLoadBalancedChemistryModel,                                       \
-        ReactionThermo,                                                        \
-        ThermoPhysics                                                          \
-    )
+    );                                                                         
 
 #define makeChemistrySolvers(Solver, ReactionThermo, ThermoPhysics)            \
     makeChemistrySolver                                                        \
@@ -90,14 +84,8 @@ thermoConstructorToTable_;
         LoadBalancedChemistryModel,                                            \
         ReactionThermo,                                                        \
         ThermoPhysics                                                          \
-    );                                                                         \
-    makeChemistrySolver                                                        \
-    (                                                                          \
-        Solver,                                                                \
-        pyJacLoadBalancedChemistryModel,                                       \
-        ReactionThermo,                                                        \
-        ThermoPhysics                                                          \
-    )                                                               
+    );                                                                         
+                                                               
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
