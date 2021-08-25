@@ -26,7 +26,7 @@ License
 #include "ode.H"
 
 #include "LoadBalancedChemistryModel.H"
-#include "pyJacLoadBalancedChemistryModel.H"
+
 
 
 #include "psiReactionThermo.H"

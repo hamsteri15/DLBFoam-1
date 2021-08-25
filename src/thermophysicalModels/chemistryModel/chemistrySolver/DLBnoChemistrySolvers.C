@@ -26,7 +26,7 @@ License
 #include "noChemistrySolver.H"
 
 #include "LoadBalancedChemistryModel.H"
-#include "pyJacLoadBalancedChemistryModel.H"
+
 
 
 #include "psiReactionThermo.H"
