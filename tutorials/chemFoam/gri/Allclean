@@ -9,4 +9,6 @@ cleanCase
 rm -rf 0 chemFoam.out constant/reactions constant/speciesThermo \
    validation/OF_vs_CHEMKINII.eps validation/chemkinII
 
+rm -rf loadBal
+
 #------------------------------------------------------------------------------

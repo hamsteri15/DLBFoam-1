@@ -54,7 +54,7 @@ DebugSwitches
 
 libs
 (
-    "libchemistryModel_DLB.so" 
+    "libchemistryModel_DLB.so"
 );
 
 // ************************************************************************* //
