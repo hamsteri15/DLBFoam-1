@@ -237,16 +237,25 @@ Foam::LoadBalancedChemistryModel<ReactionThermo, ThermoType>::updateReactionRate
 {
     scalar deltaTMin = great;
 
+    auto policy = std::execution::par_unseq;   
+
     for(const auto& array : solutions)
     {
+        std::for_each(policy, array.begin(), array.end(), [&](const ChemistrySolution& s){this->updateResult(s);});
+        
+        /*
+        const auto& solution = *std::min_element(
+            array.begin(),
+            array.end(),
+            [](const ChemistrySolution& lhs, const ChemistrySolution& rhs) {return lhs.deltaTChem < rhs.deltaTChem;}
+            );
+
+        deltaTMin = min(solution.deltaTChem, deltaTMin);
+        */
+        //TODO: replace this with std::min_element using a parallel policy
         for(const auto& solution : array)
         {
-
-            updateReactionRate(solution);
-
             deltaTMin = min(solution.deltaTChem, deltaTMin);
-        
-            cpuTimes_[solution.cellid] = solution.cpuTime;
         }
     }
 
@@ -306,8 +315,10 @@ Foam::LoadBalancedChemistryModel<ReactionThermo, ThermoType>::solveList
     DynamicList<ChemistrySolution> solutions(
         problems.size(), ChemistrySolution(this->nSpecie_));
 
+    auto policy = std::execution::par_unseq;
 
-    std::transform(problems.begin(), problems.end(), solutions.begin(), 
+
+    std::transform(policy, problems.begin(), problems.end(), solutions.begin(), 
         [&](const ChemistryProblem& p) {return this->solveSingle(p);}
     );
 
@@ -386,7 +397,7 @@ Foam::LoadBalancedChemistryModel<ReactionThermo, ThermoType>::getProblems
 
 
 template <class ReactionThermo, class ThermoType>
-void Foam::LoadBalancedChemistryModel<ReactionThermo, ThermoType>::updateReactionRate
+void Foam::LoadBalancedChemistryModel<ReactionThermo, ThermoType>::updateResult
 (
     const ChemistrySolution& solution
 )
@@ -398,6 +409,12 @@ void Foam::LoadBalancedChemistryModel<ReactionThermo, ThermoType>::updateReactio
         this->RR_[j][cellid] = solution.c_increment[j] * this->specieThermos_[j].W();
     }
     this->deltaTChem_[cellid] = min(solution.deltaTChem, this->deltaTChemMax_);
+
+    cpuTimes_[solution.cellid] = solution.cpuTime;
+
+
+
+
 }
 
 

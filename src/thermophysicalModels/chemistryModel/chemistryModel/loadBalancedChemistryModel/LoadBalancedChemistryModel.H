@@ -45,6 +45,8 @@ SourceFiles
 #include "StandardChemistryModel.H"
 #include "clockTime.H"
 
+#include <execution> //execution policies
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
@@ -93,7 +95,7 @@ private:
         solveBuffer(RecvBuffer<ChemistryProblem>& problems) const;
 
         //- Update the reaction rate based on the solution. Assumes that the solution.cellid is on the correct process
-        void updateReactionRate(const ChemistrySolution& solution);
+        void updateResult(const ChemistrySolution& solution);
 
         //- Update the reaction rates from a list of solutions
         scalar updateReactionRates(const RecvBuffer<ChemistrySolution>& solutions);
