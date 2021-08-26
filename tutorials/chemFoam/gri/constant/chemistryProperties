@@ -30,30 +30,6 @@ loadbalancing
 }
 
 
-refmapping
-{
-    active  false;
-    
-    mixtureFractionProperties
-    {
-        oxidizerMassFractions
-        {
-            N2       0.77;
-            O2       0.23;
-        }
-
-        fuelMassFractions
-        {
-            NC12H26       1.0;
-        }
-
-        //#include "$FOAM_CASE/constant/foam/thermo.foam"
-    }
-    tolerance	1e-4;  // mixture fraction tolerance
-    deltaT	2; // temperature tolerance
-}
-
-
 
 
 chemistry       on;

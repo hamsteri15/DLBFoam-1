@@ -44,7 +44,6 @@ SourceFiles
 #include "IOmanip.H"
 #include "StandardChemistryModel.H"
 #include "clockTime.H"
-#include "mixtureFractionRefMapper.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

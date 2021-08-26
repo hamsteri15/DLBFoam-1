@@ -14,7 +14,7 @@ FoamFile
     object          chemistryProperties;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
+/*
 refmapping
 {
     active          true;
@@ -33,7 +33,7 @@ refmapping
     }
     tolerance       0.0001;
 }
-
+*/
 chemistry       on;
 
 initialChemicalTimeStep 1;

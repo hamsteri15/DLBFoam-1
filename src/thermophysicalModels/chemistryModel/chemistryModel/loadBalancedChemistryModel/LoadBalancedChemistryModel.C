@@ -306,8 +306,8 @@ Foam::LoadBalancedChemistryModel<ReactionThermo, ThermoType>::solveList
 
     for(label i = 0; i < problems.size(); ++i)
     {
-        //solutions[i] = solveSingle(problems[i]);
-        solveSingle(problems[i], solutions[i]);
+        solutions[i] = solveSingle(problems[i]);
+        //solveSingle(problems[i], solutions[i]);
     }
     return solutions;
 }
