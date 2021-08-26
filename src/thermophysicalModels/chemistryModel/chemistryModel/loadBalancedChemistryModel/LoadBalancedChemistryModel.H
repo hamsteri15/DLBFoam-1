@@ -67,17 +67,9 @@ private:
         // Load balancing object
         LoadBalancer balancer_;
 
-        // Reference mapping object
-        mixtureFractionRefMapper mapper_;
 
         // Field containing chemistry CPU time information    
         volScalarField cpuTimes_;
-
-        // Field containing reference mapping information   
-        // 0 -> reference solution
-        // 1 -> mapped from reference solution
-        // 2 -> solved explicitly
-        volScalarField refMap_;
 
         // A file to output the balancing stats
         autoPtr<OFstream>        cpuSolveFile_;
@@ -85,8 +77,6 @@ private:
 
     // Private Member Functions
 
-        //- Create a reference mapper object
-        static mixtureFractionRefMapper createMapper(const ReactionThermo& thermo);
 
         //- Create a load balancer object
         LoadBalancer createBalancer();
@@ -119,11 +109,6 @@ private:
         template<class DeltaTType>
         scalar solve(const DeltaTType& deltaT);
 
-        //- Apply the reference cell mapping 
-        //TODO: This doesnt belong here and should be in reference cell mapping class. 
-        //      Implement a generic filter class from which the tabulation methods inherit and make 
-        //      the mapping base class inherit from that. 
-        void map(DynamicList<ChemistryProblem>& mapped_problems, DynamicList<ChemistryProblem>& solved_problems);
 
 
 

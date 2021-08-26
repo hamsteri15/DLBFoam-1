@@ -35,25 +35,11 @@ Foam::LoadBalancedChemistryModel<ReactionThermo, ThermoType>::
     : 
         StandardChemistryModel<ReactionThermo, ThermoType>(thermo),
         balancer_(createBalancer()), 
-        mapper_(createMapper(this->thermo())),
         cpuTimes_
         (
             IOobject
             (
                 thermo.phasePropertyName("cellCpuTimes"),
-                this->time().timeName(),
-                this->mesh(),
-                IOobject::NO_READ,
-                IOobject::AUTO_WRITE
-            ),
-            this->mesh(),
-            scalar(0.0)
-        ),
-        refMap_
-        (
-            IOobject
-            (
-                thermo.phasePropertyName("referenceMap"),
                 this->time().timeName(),
                 this->mesh(),
                 IOobject::NO_READ,
@@ -87,28 +73,6 @@ Foam::LoadBalancedChemistryModel<ReactionThermo, ThermoType>::
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-template <class ReactionThermo, class ThermoType>
-Foam::mixtureFractionRefMapper
-Foam::LoadBalancedChemistryModel<ReactionThermo, ThermoType>::createMapper
-(
-    const ReactionThermo& thermo
-)
-{
-    const IOdictionary chemistryDict_tmp
-        (
-            IOobject
-            (
-                thermo.phasePropertyName("chemistryProperties"),
-                thermo.db().time().constant(),
-                thermo.db(),
-                IOobject::MUST_READ,
-                IOobject::NO_WRITE,
-                false
-            )
-        );
-
-    return mixtureFractionRefMapper(chemistryDict_tmp, thermo.composition());
-}
 
 
 template <class ReactionThermo, class ThermoType>
@@ -366,7 +330,6 @@ Foam::LoadBalancedChemistryModel<ReactionThermo, ThermoType>::getProblems
 
 
     DynamicList<ChemistryProblem> solved_problems;
-    DynamicList<ChemistryProblem> mapped_problems;
 
     solved_problems.resize(p.size(), ChemistryProblem(this->nSpecie_));
 
@@ -395,20 +358,9 @@ Foam::LoadBalancedChemistryModel<ReactionThermo, ThermoType>::getProblems
             problem.cpuTime = cpuTimes_[celli];
             problem.cellid = celli;
 
-            // This check can only be done based on the concentration as the 
-            // reference temperature is not known
-            if (mapper_.shouldMap(massFraction))
-            {                
-                mapped_problems.append(problem);
-                refMap_[celli] = 1;
-            }
 
-            else 
-            {
-                solved_problems[counter] = problem;
-                counter++;
-                refMap_[celli] = 2;
-            }
+            solved_problems[counter] = problem;
+            counter++;
 
         }
         else
@@ -424,51 +376,12 @@ Foam::LoadBalancedChemistryModel<ReactionThermo, ThermoType>::getProblems
     //the real size is set here
     solved_problems.setSize(counter);
 
-    runtime_assert(solved_problems.size() + mapped_problems.size() == p.size(), "getProblems fails");
-
-    this->map(mapped_problems, solved_problems);
     
 
     return solved_problems;
 }
 
 
-template <class ReactionThermo, class ThermoType>
-void Foam::LoadBalancedChemistryModel<ReactionThermo, ThermoType>::map
-(
-    DynamicList<ChemistryProblem>& mapped_problems, 
-    DynamicList<ChemistryProblem>& solved_problems
-)
-{
-    if (mapped_problems.size() > 0)
-    {
-
-        ChemistryProblem refProblem = mapped_problems[0];
-        scalar refTemperature = refProblem.Ti;
-
-        ChemistrySolution refSolution(this->nSpecie_);
-        solveSingle(refProblem, refSolution);
-        refMap_[refProblem.cellid] = 0;
-
-        for (auto& problem : mapped_problems){
-
-            // Check that the refmap temperature condition is also fullfilled
-            if (mapper_.temperatureWithinRange(problem.Ti, refTemperature))
-            {
-                updateReactionRate(refSolution, problem.cellid);
-                cpuTimes_[problem.cellid] = refSolution.cpuTime;
-            }
-            // Otherwise solve
-            else 
-            {
-                solved_problems.append(problem);
-                refMap_[problem.cellid] = 2;
-            }
-        }
-
-
-    }
-}
 
 template <class ReactionThermo, class ThermoType>
 void Foam::LoadBalancedChemistryModel<ReactionThermo, ThermoType>::updateReactionRate
